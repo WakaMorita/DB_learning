@@ -1,0 +1,120 @@
+【1章】
+--INSERT INTO 家計簿 values ('2013-02-25','居住費','3月の家賃',0,85000);
+
+--Update 家計簿 set 出金額=90000 where 日付='2013-02-25';
+
+--select * from 家計簿 where 入金額=50000;
+
+--delete from 家計簿 where 出金額>4000;
+
+--update 家計簿 set メモ='カファラテを購入' where 日付='2013-02-03';
+
+
+【2章】
+--CREATE TABLE 都道府県 ( コード CHAR(2),地域 VARCHAR(10),都道府県 VARCHAR(10),県庁所在地 VARCHAR(10),面積 INTEGER );
+--insert into 都道府県 values ('1','東北','青森','青森',9645);
+
+select コード
+		,地域
+		,都道府県
+		,県庁所在地
+		,面積
+FROM 都道府県;
+
+select *
+FROM 都道府県;
+
+select 地域 as area
+		,都道府県 as pref
+FROM 都道府県;
+
+insert into 都道府県 values('26','近畿','京都',null,4613);
+insert into 都道府県 values('37','四国','香川','高松',1876);
+insert into 都道府県 values('40',null,'福岡','福岡',null);
+
+update 都道府県 set 県庁所在地='京都' where コード='26';
+update 都道府県 set 地域='九州',面積=4976 where コード='40';
+delete from 都道府県 where コード='26';
+
+【3章】
+create table 気象観測 (
+	月 Integer
+	,降水量 Integer
+	,最高気温 Integer
+	,最低気温 Integer
+	,湿度 Integer
+);
+
+insert into 気象観測 values(1,70,16,-0,74);
+insert into 気象観測 values(2,74,17,-2,71);
+insert into 気象観測 values(3,120,23,-0,68);
+insert into 気象観測 values(4,118,25,3,59);
+insert into 気象観測 values(5,123,30,9,65);
+insert into 気象観測 values(6,218,33,14,71);
+insert into 気象観測 values(7,403,35,19,82);
+insert into 気象観測 values(8,57,38,22,68);
+insert into 気象観測 values(9,122,35,15,76);
+insert into 気象観測 values(10,272,28,6,75);
+insert into 気象観測 values(11,33,26,4,75);
+insert into 気象観測 values(12,15,16,-1,70);
+
+select * from 気象観測 where 月 = 6;
+select * from 気象観測 where 月 <> 6;
+select * from 気象観測 where 降水量<100;
+select * from 気象観測 where 降水量>200;
+select * from 気象観測 where 最高気温>=30;
+select * from 気象観測 where 最低気温<=0;
+select * from 気象観測 where 月 IN(3,5,7);
+select * from 気象観測 where 月 NOT IN(3,5,7);
+select * from 気象観測 where 降水量 <= 100 and 湿度 < 50;
+select * from 気象観測 where 最低気温 < 5 or 最高気温 > 35;
+select * from 気象観測 where 湿度 Between 60 and 79;
+select * from 気象観測 where 降水量 is NULL or 最高気温 is NULL or 最低気温 is NULL or 湿度 is NULL;
+
+
+select * from 都道府県 where 都道府県 like '%川';
+select * from 都道府県 where 都道府県 like '%島%';
+select * from 都道府県 where 都道府県 like '愛%';
+select * from 都道府県 where 都道府県 = 県庁所在地;
+select * from 都道府県 where 都道府県 <> 県庁所在地;
+
+
+create table 成績 (学籍番号 char(4), 学生名 varchar(20), 法学 integer, 経済学 integer, 哲学 integer,情報理論 integer, 外国語 integer ,総合成績 char(1));
+select * from 成績;
+insert into 成績 values('S001','織田　信長',77,55,80,75,93,Null);
+insert into 成績 values('A002','豊臣　秀吉',64,69,70,0,59,Null);
+insert into 成績 values('E003','徳川　家康',80,83,85,90,79,Null);
+update 成績 set 法学=85, 哲学=67 where 学籍番号='S001';
+update 成績 set 外国語=81 where 学籍番号 IN ('A002','E003');
+update 成績 set 総合成績='A' where 法学>=80 and 経済学>=80 and 哲学>=80 and 情報理論>=80 and 外国語>=80
+update 成績 set 総合成績='B' where (法学>=80 or 外国語>=80) and (経済学>=80 or 哲学>=80) AND 総合成績 is null;
+update 成績 set 総合成績='D' where 法学<50 and 経済学<50 and 哲学<50 and 情報理論<50 and 外国語<50 AND 総合成績 is null
+update 成績 set 総合成績='C' where 総合成績 is null;
+delete from 成績 where 法学=0 or 経済学=0 or 哲学=0 or 情報理論=0 or 外国語=0;
+
+【4】
+select * from 注文履歴 order by 注文番号,注文枝番;
+select distinct 商品名 from 注文履歴 where 日付>='2012-01-01' and 日付<='2012-01-31' order by 商品名;
+select 商品名,単価 from 注文履歴 where 分類='1' order by 単価 limit 3;
+select 商品名,単価 from 注文履歴 where 分類='2' order by 単価 desc limit 1 offset 1;
+SELECT 日付,商品名,単価,数量,注文金額,日付 FROM 注文履歴 WHERE 分類='3' AND 数量>=2 ORDER BY 日付,数量 DESC;
+select 分類,商品名,サイズ,単価 from 注文履歴 where 分類='1'
+union
+select 分類,商品名,null,単価 from 注文履歴 where 分類='2'
+union
+select 分類,商品名,null,単価 from 注文履歴 where 分類='3' 
+order by 分類,商品名;
+
+
+select * from 奇数
+union
+select * from 偶数;
+select * from 整数
+except
+select * from 偶数;
+select * from 整数
+intersect
+select * from 偶数;
+select * from 奇数
+intersect
+select * from 偶数;
