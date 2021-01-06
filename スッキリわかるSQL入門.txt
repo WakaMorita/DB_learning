@@ -219,3 +219,36 @@ having min(最低気温)<=-10;
 select count(社員名) as 入室中社員数
 from 入退室管理
 where 退室 is null;
+6-2-2
+select 社員名 
+		,count(社員名) as 入室回数
+from 入退室管理
+group by 社員名
+order by 入室回数 desc;
+6-2-3
+select case 事由区分 when '1' then 'メンテナンス'
+					when '2' then 'リリース作業'
+					when '3' then '障害対応'
+					when '9' then 'その他'
+					end as 事由区分
+		,count(事由区分) as 入室回数
+from 入退室管理
+group by 事由区分
+order by 入室回数 desc;
+6-2-4
+select 社員名
+		,count(社員名) as 入室回数 
+from 入退室管理
+group by 社員名
+having count(社員名)>=10;
+6-2-5
+SELECT 日付
+		, COUNT(社員名) AS 対応社員数
+FROM 入退室管理
+WHERE 事由区分 = '3'
+GROUP BY 日付
+
+*要注意
+count*とcount(列名)はnullの扱いが違う。
+not in,<>any条件に一つでもnullがあると結果がすべてnullになってしまう(is not null条件を追加する。もしくはcoalesceでnullを置き換える癖をつけておくことでミスが起きにくい。)
+副問い合わせはスカラー,ベクター，マトリックスの3パターン
