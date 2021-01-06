@@ -174,3 +174,48 @@ from 受注
 order by 受注日,受注ID;
 5-3-3
 update 受注 set 文字=replace(文字,' ','★') where 受注ID = '113';
+
+
+【6】
+6-1-1
+select sum(降水量) as 年間降水量
+		, avg(最高気温) as 年間平均最高気温
+		, avg(最低気温) as 年間平均最低気温
+from 都市別気象観測;
+6-1-2
+select sum(降水量) as 年間降水量
+		,avg(最高気温) as 年間平均最高気温
+		,avg(最低気温) as 年間平均最低気温
+from 都市別気象観測
+group by 都市名
+having 都市名='東京';
+6-1-3
+select 都市名
+		,sum(降水量) as 年間降水量
+		,min(最高気温) as 最も低い最高気温
+		,max(最低気温) as 最も高い最低気温
+from 都市別気象観測
+group by 都市名;
+6-1-4
+select 月
+		,sum(降水量) as 降水量
+		,avg(最高気温) as 最高気温
+		,avg(最低気温) as 最低気温
+from 都市別気象観測
+group by 月;
+6-1-5
+select 都市名
+		,max(最高気温)
+from 都市別気象観測
+group by 都市名
+having max(最高気温)>=38;
+6-1-6
+select 都市名
+		,min(最低気温)
+from 都市別気象観測
+group by 都市名
+having min(最低気温)<=-10;
+6-2-1
+select count(社員名) as 入室中社員数
+from 入退室管理
+where 退室 is null;
