@@ -324,7 +324,47 @@ join 支店 as 上司支店
 on 社員.勤務地id=上司支店.支店id
 where 本人支店.名前<>上司支店.名前;
 
+【10】
+10-2
+CREATE TABLE 学部 (
+  ID    CHAR(1)			PRIMARY KEY,      -- 学部を一意に特定する文字
+  名前   VARCHAR(20)		UNIQUE NOT NULL,  -- 学部の名前（必須、重複不可）
+  備考   VARCHAR(100)		DEFAULT '特になし' NOT NULL  -- 特にない場合は、'特になし'を設定
+);
+10-3
+CREATE TABLE 学生 (
+  学籍番号 CHAR(8)     PRIMARY KEY,
+  名前     VARCHAR(30) NOT NULL,
+  生年月日 DATE        NOT NULL, 
+  血液型   CHAR(2)     CHECK (
+                        血液型 IN ('A ', 'B ', 'O ', 'AB') OR
+                        血液型 IS NULL
+                       ),
+  学部ID   CHAR(1)     REFERENCES 学部(ID)
+);
+10-5
+BEGIN;
+UPDATE 学生 SET 学部ID = 'K'
+ WHERE 学部ID = 'R';
+DELETE FROM 学部
+ WHERE ID = 'R';
+COMMIT;
 
+
+【11】
+11-2-2
+CREATE VIEW 学部名付き学生一覧 AS
+SELECT S.学籍番号, S.名前, S.生年月日, S.血液型,
+       S.学部ID, B.名前 AS 学部名
+  FROM 学生 AS S
+  JOIN 学部 AS B
+    ON S.学部ID = B.ID
+11-2-3
+INSERT INTO 学生
+  (学籍番号, 名前, 生年月日, 血液型, 学部ID, 登録順)
+VALUES
+  ('B1101022', '古島 進', '1993-02-12', 'A', 'K', ISTD.NEXTVAL)
+  
 
 *要注意
 count*とcount(列名)はnullの扱いが違う。
@@ -335,3 +375,6 @@ not in,<>any条件に一つでもnullがあると結果がすべてnullになっ
 自動コミットモードに気を付ける(DBMSツールによって違う)
 トランザクション分離は基本read committed(状況によって変更)明示的なロックも可能
 ダーティリード,反復不能読み取り,ファントムリード
+truncate tableはDD(Lロールバックできない,高速)
+シーケンスはロールバックされても進んでしまう
+採番ではmaxを使うのはよくない(ロックによるパフォーマンスの低下、不変性の崩壊)
