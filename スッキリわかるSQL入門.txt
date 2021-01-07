@@ -252,3 +252,29 @@ GROUP BY 日付
 count*とcount(列名)はnullの扱いが違う。
 not in,<>any条件に一つでもnullがあると結果がすべてnullになってしまう(is not null条件を追加する。もしくはcoalesceでnullを置き換える癖をつけておくことでミスが起きにくい。)
 副問い合わせはスカラー,ベクター，マトリックスの3パターン
+相関副問い合わせ(繰り返し副問い合わせが働くので負荷大)
+
+【7】
+7-3-1
+insert into 頭数集計
+select 飼育県
+		,count(飼育県) as 頭数
+		from 個体識別 group by 飼育県;
+7-3-2
+select 飼育県 as 都道府県
+		,個体識別番号
+		,case 雌雄コード when '1' then '雄'
+							when '2' then '雌'
+							end as 雌雄
+from 個体識別
+where 飼育県 in (select 飼育県 from 頭数集計 order by 頭数 desc limit 3);
+7-3-3
+select 個体識別番号
+		,case 品種コード when '01' then '乳用種'
+						when '02' then '肉用種'
+						when '03' then '交雑種'
+						end as 品種
+		,出生日
+		,母牛番号
+from 個体識別
+where 母牛番号 in (select 個体識別番号 from 個体識別 where 品種コード='01');
