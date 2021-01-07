@@ -248,11 +248,6 @@ FROM 入退室管理
 WHERE 事由区分 = '3'
 GROUP BY 日付
 
-*要注意
-count*とcount(列名)はnullの扱いが違う。
-not in,<>any条件に一つでもnullがあると結果がすべてnullになってしまう(is not null条件を追加する。もしくはcoalesceでnullを置き換える癖をつけておくことでミスが起きにくい。)
-副問い合わせはスカラー,ベクター，マトリックスの3パターン
-相関副問い合わせ(繰り返し副問い合わせが働くので負荷大)
 
 【7】
 7-3-1
@@ -278,3 +273,62 @@ select 個体識別番号
 		,母牛番号
 from 個体識別
 where 母牛番号 in (select 個体識別番号 from 個体識別 where 品種コード='01');
+
+
+【8】
+8-2-1
+select 社員番号
+		,社員.名前
+		,部署.名前 as 部署名
+from 社員
+join 部署
+on 社員.部署id=部署.部署id;
+8-2-2
+select main.社員番号
+		,main.名前
+		,boss.名前
+from 社員 as main
+left join 社員 as boss
+on main.上司id=boss.社員番号;
+8-2-3
+select 社員番号
+		,社員.名前
+		,部署.名前 as 部署名
+		,支店.名前 as 勤務地
+from 社員
+join 部署
+on 社員.部署id=部署.部署id
+join 支店
+on 社員.勤務地id=支店.支店id;
+8-2-4
+select 支店.支店id as 支店コード
+		,支店.名前 as 支店名
+		,社員.名前 as 支店長名
+		,社員数.社員数
+from 支店
+left join 社員
+on 支店.支店長id=社員.社員番号
+left join (select 勤務地id,count(勤務地id) as 社員数 from 社員 group by 勤務地id) as 社員数
+on 支店.支店id=社員数.勤務地id;
+8-2-5
+select 社員.社員番号
+		,社員.名前
+		,本人支店.名前 as 本人勤務地
+		,上司支店.名前 as 上司勤務地
+from 社員
+join 支店 as 本人支店
+on 社員.勤務地id=本人支店.支店id
+join 社員 as 上司
+on 社員.上司id=上司.社員番号
+join 支店 as 上司支店
+on 社員.勤務地id=上司支店.支店id
+where 本人支店.名前<>上司支店.名前;
+
+
+
+*要注意
+count*とcount(列名)はnullの扱いが違う。
+not in,<>any条件に一つでもnullがあると結果がすべてnullになってしまう(is not null条件を追加する。もしくはcoalesceでnullを置き換える癖をつけておくことでミスが起きにくい。)
+副問い合わせはスカラー,ベクター，マトリックスの3パターン
+相関副問い合わせ(繰り返し副問い合わせが働くので負荷大)
+結合条件の非等価結合(＝以外)は負荷が大きい
