@@ -1,0 +1,112 @@
+1
+select 口座番号
+		,名義
+		,種別
+		,残高
+		,更新日
+from 口座;
+
+2
+select 口座番号 from 口座;
+
+3
+select 口座番号,残高 from 口座;
+
+4
+select * from 口座;
+
+5
+update 口座 set 名義='XXXXX';
+
+6
+update 口座 set 残高=999999999
+				,更新日='2013-03-01';
+
+7
+insert into 口座 values('0642191','アオキ ハルカ','1',3640551,'2013-03-13');
+insert into 口座 values('1039410','キノシタ リュウジ','1',259017,'2012-11-30');
+insert into 口座 values('1239855','タカシナ ミツル','2',6509773,null);
+
+8
+DELETE FROM 口座;
+
+9
+select * from 口座 where 口座番号='0037651';
+
+10
+select * from 口座 where 残高 > 0;
+
+11
+select * from 口座 where CAST(口座番号 AS Integer)  < 1000000;
+
+12
+select * from 口座 where 更新日<'2013-01-01';
+
+13
+select * from 口座 where 残高>=1000000;
+
+14
+select * from 口座 where 種別<>'1';
+
+15
+select * from 口座 where 更新日 is null;
+
+16
+select * from 口座 where 名義 like '%ハシ%';
+
+17
+select * from 口座 where 更新日 < '2013-02-01' and 更新日 >'2012-12-31';
+
+18
+select * from 口座 where 種別 in ('2','3');
+
+19
+select * from 口座 where 名義 in ('サカタ　リョウヘイ','マツモト　ミワコ','ハマダ　サトシ');
+
+20
+select * from 口座 where 更新日 <= '2013-01-04' and 更新日 >= '2012-12-30';
+
+21
+select * from 口座 where 残高 < 10000 and 更新日 is not null;
+
+22
+select * from 口座 where (cast(口座番号 as integer) < 3000000 and cast(口座番号 as integer) >= 2000000)
+					or 名義 like 'エ__ %コ';
+
+24
+select * from 口座 order by 口座番号 asc;
+
+25
+select distinct(名義) from 口座 order by 名義 asc;
+
+26
+select 口座番号
+		,名義
+		,種別
+		,残高
+		,更新日
+from 口座 order by 4,1;
+
+27
+select *
+from 口座
+where 更新日 is not null
+order by 更新日 limit 10;
+
+28
+select 更新日
+		,残高
+from 口座
+where 更新日 is not null and 残高 <> 0
+order by 残高,更新日 desc limit 10 offset 10;
+
+29
+select 口座番号
+from 口座
+union
+select 口座番号
+from 廃止口座
+order by 口座番号;
+
+30
+select distinct(名義) from 口座 where 名義 not in (select 名義 from 廃止口座) order by 名義 desc;
