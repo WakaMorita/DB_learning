@@ -110,3 +110,59 @@ order by 口座番号;
 
 30
 select distinct(名義) from 口座 where 名義 not in (select 名義 from 廃止口座) order by 名義 desc;
+
+31
+select 名義 from 口座 
+intersect
+select 名義 from 廃止口座
+order by 名義;
+
+32
+select 口座番号,残高 from 口座 where 残高 <> 0
+union
+select 口座番号,解約時残高 from 廃止口座 where 解約時残高 <> 0
+order by 口座番号;
+
+33
+select 口座番号,名義,'〇' as 口座区分 from 口座
+union
+select 口座番号,名義,'×' as 口座区分 from 廃止口座
+order by 名義;
+
+34
+select 口座番号
+		,残高/1000 as 千円単位の残高
+from 口座
+where 残高 >= 1000000;
+
+
+35
+insert into 口座 values ('0652281','タカギ　ノブオ','1',100000+3000,'2013-04-01');
+insert into 口座 values ('1026413','マツモト　サワコ','1',300000+3000,'2013-04-02');
+insert into 口座 values ('2239710','ササキ　シゲノリ','1',1000000+3000,'2013-04-03');
+
+36
+update 口座 set 残高=(残高-3000)*1.003 where 口座番号 in ('0652281','1026413','2239710'); 
+
+37
+select 口座番号,更新日,更新日+180 as 通帳期限日 from 口座 where 更新日 <='2011-12-31';
+
+38
+select 口座番号,'カ）' || 名義  as 名義 from 口座 where 種別 ='3';
+
+39
+select distinct(種別) as 種別コード
+	,case 種別 when '1' then '普通'
+				when '2' then '当座'
+				when '3' then '別段'
+				end as 種別名
+from 口座;
+
+40
+select 口座番号
+		,名義
+		,case when 残高< 100000 then 'C'
+				when 残高< 1000000 then 'B'
+				else 'A'
+				end as 残高ランク
+from 口座;
