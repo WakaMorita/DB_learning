@@ -166,3 +166,63 @@ select 口座番号
 				else 'A'
 				end as 残高ランク
 from 口座;
+
+41
+select length(口座番号) as 口座番号,length(replace(名義,'　','')) as 名義,length(cast(残高 as VARCHAR(10))) as 残高 from 口座;
+
+42
+select * from 口座 
+where 名義 like 'カワ%' 
+or 名義 like '_カワ%'
+or 名義 like '__カワ%'
+or 名義 like '___カワ%';
+
+select * from 口座 where substring(名義,1,5) like '%カワ%' ;
+
+43
+select * from 口座 where length(cast(残高 as VARCHAR(10))) > 4
+						and right(cast(残高 as VARCHAR(10)),3) = '000';
+
+44
+select 口座番号,残高,FLOOR(残高*0.0002) as 利息 from 口座 order by 残高 desc;
+
+45
+select 口座番号
+		,残高
+		,case when 残高 < 500000 then FLOOR(残高*0.0001)
+				when 残高 < 2000000 then FLOOR(残高*0.0002)
+				else FLOOR(残高*0.0003)
+				end as 残高別利息
+from 口座
+order by 残高別利息 desc,口座番号 asc;
+
+46
+insert into 口座 values ('0351262','イトカワ　ダイ','2',635110,CURRENT_DATE);
+insert into 口座 values ('1015513','アキツ　ジュンジ','1',88463,CURRENT_DATE);
+insert into 口座 values ('1739298','ホシノ　サトミ','1',704610,CURRENT_DATE);
+
+47
+select 口座番号
+		,名義
+		,種別
+		,残高
+		,left(cast(更新日 as VARCHAR(13)),4) || '年' || substring(cast(更新日 as VARCHAR(13)),6,2) || '月' || right(cast(更新日 as VARCHAR(13)),2) || '日' as 更新日
+from 口座
+where 更新日 >= '2013-01-01';
+
+48
+select case when 更新日 is null then '設定なし'
+			else cast(更新日 as varchar(13))
+			end as 更新日
+from 口座;
+
+49
+select sum(残高),max(残高),min(残高),avg(残高),count(*) from 口座;
+
+50
+select count(*) as データ件数 from 口座 where 種別 <> '1'
+								and 残高 >1000000
+								and 更新日 < '2013-01-01';
+
+51
+
