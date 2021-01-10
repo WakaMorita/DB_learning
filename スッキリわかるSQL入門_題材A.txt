@@ -225,4 +225,73 @@ select count(*) as データ件数 from 口座 where 種別 <> '1'
 								and 更新日 < '2013-01-01';
 
 51
+select count(*)-count(更新日) as 件数 from 口座;
+
+52
+select max(名義),min(名義) from 口座;
+
+53
+select max(更新日),min(更新日) from 口座;
+
+54
+select 種別
+		,sum(残高) as 合計
+		,max(残高) as 最高
+		,min(残高) as 最低
+		,avg(残高) as 平均
+		,count(*) as 件数
+from 口座
+group by 種別;
+
+55
+select right(口座番号,1) 口座番号グループ
+		,count(*) 件数
+from 口座
+group by right(口座番号,1)
+order by 件数 desc;
+
+56
+select left(cast(更新日 as Varchar(13)),4) as 更新日
+		,sum(残高) as 合計
+		,max(残高) as 最高
+		,min(残高) as 最低
+		,avg(残高) as 平均
+		,count(*) as 件数
+from 口座
+group by left(cast(更新日 as Varchar(13)),4);
+
+57
+select 種別,sum(残高) 合計
+		,count(*) 件数
+from 口座
+group by 種別
+having sum(残高) < 3000000;
+
+58
+select left(名義,1) as 名義1文字目
+		,count(*) as 件数
+		,avg( length( replace(名義,'　','') ) ) as 名義文字数平均
+from 口座
+group by left(名義,1)
+having count(*) >= 10
+or avg( length( replace(名義,'　','') ) ) >= 5;
+
+59
+UPDATE 口座
+   SET 残高 = 残高 + (SELECT SUM(入金額) - SUM(出金額)
+                        FROM 取引
+					   WHERE 口座番号 = '0351333'
+					     AND 日付     = '2013-01-11'),
+	   更新日 = '2013-01-11'
+ WHERE 口座番号 = '0351333';
+
+60
+select 残高
+		,(select sum(入金額) from 取引 where 口座.口座番号='1115600' and 日付='2012-12-28') as 入金額合計
+		,(select sum(出金額) from 取引 where 口座.口座番号='1115600' and 日付='2012-12-28') as 出金額合計
+from 口座
+where 口座.口座番号='1115600';
+
+
+
 
