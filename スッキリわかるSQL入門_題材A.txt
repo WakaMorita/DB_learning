@@ -292,6 +292,85 @@ select 残高
 from 口座
 where 口座.口座番号='1115600';
 
+61
+select 口座番号,名義,残高 from 口座 where 口座番号 in (select 口座番号 from 取引 where 入金額 > 1000000);
 
+62
+select * from 口座 where 更新日 > all(select 日付 from 取引);
 
+63
+SELECT A.日付, B.最大入金額, B.最大出金額
+  FROM (SELECT 日付, SUM(入金額) AS 入金額合計, SUM(出金額) AS 出金額合計
+          FROM 取引
+		 WHERE 口座番号 = '3104451'
+		 GROUP BY 日付
+		HAVING SUM(入金額) > 0
+		   AND SUM(出金額) > 0) AS A,
+	   (SELECT MAX(入金額) AS 最大入金額, MAX(出金額) AS 最大出金額
+	      FROM 取引
+		 WHERE 口座番号 = '3104451') AS B
 
+64
+insert into 廃止口座 (口座番号,名義,種別,解約時残高,解約日)
+select 口座番号,名義,種別,残高,Now()
+from 口座
+where 口座番号='12761055';
+
+delete from 口座 where 口座番号='12761055';
+
+65
+SELECT T.口座番号, T.日付, J.取引事由名,
+       COALESCE(T.入金額, T.出金額) AS 取引金額
+  FROM 取引 AS T
+  JOIN 取引事由 AS J
+    ON T.取引事由ID = J.取引事由ID
+ WHERE T.口座番号 IN ('0311240', '1234161', '2750902')
+ ORDER BY T.口座番号, T.取引番号
+ 
+66
+select a.口座番号,a.名義,a.残高,b.日付,b.入金額,b.出金額
+from 口座 a
+join 取引 b
+on a.口座番号=b.口座番号
+where a.口座番号='0887132'
+order by 更新日;
+
+67
+select a.口座番号,b.名義,b.残高
+from 取引 a
+join 口座 b
+on a.口座番号=b.口座番号
+where a.日付='2011-03-01';
+
+68
+select a.口座番号
+		,coalesce(b.名義,'解約済み')
+		,coalesce(b.残高,'0')
+from 取引 a
+left join 口座 b
+on a.口座番号=b.口座番号
+where a.日付='2011-03-01';
+
+69
+select a.取引番号
+		,b.取引事由id || ':' || b.取引事由名 as 取引事由
+		,a.日付
+		,a.口座番号
+		,a.入金額
+		,a.出金額
+from 取引 a
+right join 取引事由 b
+on a.取引事由id=b.取引事由id;
+
+70
+select distinct a.取引事由id,b.取引事由名
+from 取引 a
+left join 取引事由 b
+on a.取引事由id=b.取引事由id
+union
+select distinct a.取引事由id,b.取引事由名
+from 取引 a
+right join 取引事由 b
+on a.取引事由id=b.取引事由id;
+
+71
