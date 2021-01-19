@@ -33,6 +33,36 @@ select * from 商品 where 単価<1000;
 select * from 商品 where 単価>50000;
 
 10
-select * from 注文 where 注文日 >'2013-01-01';
+select * from 注文 where 注文日 >= '2013-01-01';
 
 11
+select * from 注文 where 注文日 <= '2012-11-01';
+
+12
+select * from 商品 where 商品区分 <> 1;
+
+13
+select * from 注文 where クーポン割引料 is null;
+
+14
+delete from 商品 where 商品コード like 'N%';
+
+15
+select 商品コード, 商品名, 単価 from 商品 where 商品名 like '%コート%';
+
+16
+select 商品コード,商品区分 from 商品 where 商品区分 in(2,3,9);
+
+17
+select * from 商品 where 商品コード between 'A0100' and 'A0500';
+
+18
+select * from 注文 where 商品コード in('N0501','N1021','N0223');
+
+19
+select  * from 商品 where 商品区分 = 3 and 商品名 like '%水玉%';
+
+20
+select * from 商品 where 商品名 like '%軽い%' or 商品名 like '%ゆるふわ%';
+
+21
