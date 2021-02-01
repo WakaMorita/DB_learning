@@ -199,3 +199,36 @@ from 注文 group by 商品コード
 order by sum(数量) desc,商品コード limit(10);
 
 51
+select 商品コード,sum(数量) as 数量合計 from 注文 group by 商品コード having sum(数量)<5;
+
+52
+select count(クーポン割引料) as 注文件数
+		, sum(クーポン割引料) as 割引額
+from 注文;
+
+53
+select substring(注文番号,1,6) as 年月
+		,count(*) as 注文件数
+from 注文
+where 注文枝番 = 1
+group by substring(注文番号,1,6)
+order by substring(注文番号,1,6);
+
+54
+select 商品コード
+from 注文
+where 商品コード like 'Z%'
+group by 商品コード
+having sum(数量) >100;
+
+55
+select 商品コード
+		,商品名
+		,単価
+		,(select sum(数量
+			from 注文 
+			group by 商品コード
+			having 商品コード='S0604'
+		) as 販売数量
+from 商品
+where 商品コード='S0604';
